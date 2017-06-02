@@ -1,5 +1,7 @@
 package com.hqyg.disjob.register.repository.watch.listener;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
@@ -36,10 +38,20 @@ public class ConnectionStateListenerImpl implements ConnectionStateListener {
 				} catch (InterruptedException e) {
 					LoggerUtil.error(
 							"InterruptedException lient.getZookeeperClient().blockUntilConnectedOrTimedOut()",e);
-					break;
+					try {
+						TimeUnit.SECONDS.sleep(3);
+					} catch (InterruptedException e1) {
+						 
+					}
+					//break;
 				} catch (Exception e) {
 					LoggerUtil.error("Exception lient.getZookeeperClient().blockUntilConnectedOrTimedOut()", e);
-					break;
+					try {
+						TimeUnit.SECONDS.sleep(3);
+					} catch (InterruptedException e1) {
+						 
+					}
+					//break;
 				}
 			}
 		}

@@ -4,11 +4,13 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import com.hqyg.disjob.java.listener.CuratorConnectStateListener;
 import com.hqyg.disjob.java.service.EjobConfigService;
 import com.hqyg.disjob.java.utils.StringUtils;
 
 public class CuratorClientBuilder {
-	
+	public static volatile boolean isCanUse = false ;
+
 	private static CuratorFramework client = null;
 	private final static CuratorClientBuilder zkClientBuilder = new CuratorClientBuilder();
 	
@@ -19,7 +21,11 @@ public class CuratorClientBuilder {
 			synchronized (zkClientBuilder) {
 				if(client == null){
 					client =CuratorFrameworkFactory.builder().connectString(zkHost).namespace(zkRootNode).sessionTimeoutMs(3000).retryPolicy(new ExponentialBackoffRetry(3000, 10)).build();
+					client.getConnectionStateListenable().addListener(new CuratorConnectStateListener());
+
 					client.start();
+					isCanUse = true ;
+
 				}
 			}
 		}
