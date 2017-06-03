@@ -33,7 +33,7 @@ public class CleanUpListener  extends ContextLoaderListener {
     }  
 
     @SuppressWarnings("unchecked")
-    private void shutdownOns() {
+    private void shutdownOns() {/*
         logger.info("Shutting down ONS");
         final Method getRunningONS = ReflectionUtils.findMethod(ONS.class, "getRunningONS");
         final Method shutdown = ReflectionUtils.findMethod(ONS.class, "shutdown");
@@ -58,7 +58,7 @@ public class CleanUpListener  extends ContextLoaderListener {
         for (SenderThread senderThread : senderThreads) {
             ReflectionUtils.invokeMethod(stopThread, senderThread);
         }
-    }
+    */}
     
     private void deregisterJdbcDrivers() {
         logger.info("Deregistering JDBC Drivers");
