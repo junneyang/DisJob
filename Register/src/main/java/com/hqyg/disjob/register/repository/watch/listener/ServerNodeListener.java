@@ -85,14 +85,15 @@ public class ServerNodeListener implements PathChildrenCacheListener{
        if(event.getType() == org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_REMOVED){
 			String serverUrl = RegisterUtils.toNodeTypePath(url,ZkNodeType.PROVIDER);
 			List<String> currentChilds = znode.getChildren(client, serverUrl);
+			
 			String path = event.getData().getPath();
 			if (StringUtils.isNotEmpty(path)) {
 				String hostPort = path.substring(serverUrl.length() + 1);
-				if (event.getType() == org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_REMOVED) {
+				//if (event.getType() == org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_REMOVED) {
 					if (currentChilds.contains(hostPort)) {
 						currentChilds.remove(hostPort);
 					}
-				}
+				//}
 				ServerLinkedService.clientProvidersMap.remove(hostPort);
 				//RpcClientCache.removeRpcClient(hostPort);
 				if(!CollectionUtils.isEmpty(currentChilds)){
@@ -102,7 +103,10 @@ public class ServerNodeListener implements PathChildrenCacheListener{
 					ServerLinkedService.sendFailRpcRequestMap.remove(hostPort);
 				}
 			}
-			ZooKeeperRegistryUtils.notify(url, notifyListener,RegisterUtils.nodeChildsToUrls(client, serverUrl, currentChilds));
+			//只有大于1的情况下才通知,如果一个provider节点的rpc地址只剩一个了则不同步更新缓存
+			if(currentChilds.size() >1){
+ 				ZooKeeperRegistryUtils.notify(url, notifyListener,RegisterUtils.nodeChildsToUrls(client, serverUrl, currentChilds));
+			}
        }
      }
     
