@@ -37,7 +37,7 @@ disjob分布式任务调度概述<br/>
 
   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/%E8%B0%83%E5%BA%A6%E4%B8%AD%E5%BF%83%E6%B5%81%E7%A8%8B%E5%9B%BE.png)<br/>
 #五、模块介绍<br/>
-##Disjob-event：
+##Disjob-quence：<br/>
   一个事件通知模式的基础公共模块，在disjob的服务端和客户端代码中都有引入该模块。
 ##Disjob-event：
 一个基于无阻塞队列的线程池顺序调度公共模块，线程池执行完队列中一个任务继续有序的执行下一个任务。在disjob 的服务端和客户端代码中都有引入该模块。
