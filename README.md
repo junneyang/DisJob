@@ -65,7 +65,7 @@ disjob 后台管理模块，在后台对job进行管理、监控、登陆等都�
   我们先构造disjob的服务端（被调用方），先用最简单的普通java接入方式做例子：<br/>
 ## 普通的java app 应用接入步骤：<br/>
   
-###1.在指定的 **.properties 文件 配置ejob必要的一些参数：zookeeper 集群地址、服务监听的端口，以及job所在的package<br/>
+### 1.在指定的 **.properties 文件 配置ejob必要的一些参数：zookeeper 集群地址、服务监听的端口，以及job所在的package<br/>
   
   #please tall me where is the zookeeper server host<br/>
   zk.host=127.0.0.1:2181<br/>
@@ -74,7 +74,7 @@ disjob 后台管理模块，在后台对job进行管理、监控、登陆等都�
   #where is the job class inside the packages<br/>
   job.packages=com.hqyg.job.pack;<br/>
   
-###2.业务所在的类必须实现EJob 接口，所有的业务实现都在execute 方法中，同时加上暴露给我们EJOB 调度中心的注解
+### 2.业务所在的类必须实现EJob 接口，所有的业务实现都在execute 方法中，同时加上暴露给我们EJOB 调度中心的注解
   
 			@JobDec(group="alarm",jobName="alarmJob1",quartz="0/10 * * * * ?",fireNow=true)	
 			public class AlarmJobAction implements EJob{
@@ -95,7 +95,7 @@ disjob 后台管理模块，在后台对job进行管理、监控、登陆等都�
 			}
 		}
  
-###3.调用我们给定的api 即可注册 [注意：]configPath 必须给的是绝对路径
+### 3.调用我们给定的api 即可注册 [注意：]configPath 必须给的是绝对路径
 
 		public class FireNowMain {
 			public static void main(String[] args) {
@@ -104,11 +104,11 @@ disjob 后台管理模块，在后台对job进行管理、监控、登陆等都�
 			}
 		}
 
-###4 导入sql和配置conf文件
-####1、导入disjob.sql到db中
-####2、解压disjob.zip文件放入pom指定环境的配置文件中
+### 4 导入sql和配置conf文件
+#### 1、导入disjob.sql到db中
+#### 2、解压disjob.zip文件放入pom指定环境的配置文件中
 　　如pom的profiles标签中有三种环境可配置,根据实际环境在指定路径配置conf文件，如在 <Disjob-conf>D:/conf/Disjob</Disjob-conf>路径下放入 　　　　disjob.zip 中的jdbc.properties等文件。
-###5、编译打包
+### 5、编译打包
 最后对DisJob的pom文件 所在路径下执行mvn clean package install -Ppublish -X -Dmaven.test.skip=true(这里是执行publish环境)
 #####disjob后台效果:
    ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/index.png)
