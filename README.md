@@ -1,7 +1,7 @@
 # DisJob
 
 DisJob 是一个基于Quartz、Netty、ZooKeeper的分布式rpc调度job框架，是目前业内极少使用tcp协议来做异步RPC调度的框架，因为基于tcp协议，所以支持多语言，多语言系统间定时调用非常方便。在整个集团有java版本和php版本，支撑着数十个团队，数万个job的运行。目前只开源java版本。<br/>
-#一、项目背景
+# 一、项目背景
 disjob分布式任务调度概述<br/>
 公司现有定时任务（job）有10w+，基于crontab实现分散于很多系统中，有时会发生故障，原因有多种，job执行过程中本身发生故障，系统进程挂 掉，系统所在服务器宕机；对于需要执行几个小时的大型job没有分片功能，或者不能非常方便的分片。因此disjob调度中心是为解决这些问题而设计，初步计 划要实现的功能如下：<br/>
         1、防单点故障：业务系统的单点故障以及调度中心本身的单点故障<br/>
@@ -22,21 +22,21 @@ disjob分布式任务调度概述<br/>
 2、使用我们提供的网络API给调度中心发送日志消息，会一定程度侵入业务代码，只增加代码，不会改变原有代码的逻辑<br/>
 目前该项目上线后支持数千个Job，数十个项目在线调度，还在不断的有项目接入。disjob客户端是java，目前有java服务端和php服务端，开源部分是java服务端和客户端。经过压测，三台双核云主机能支持几千个20秒内随机周期job并发运行，无延迟。
   
-#二、总体架构
+# 二、总体架构
   
   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
 
   
-#三、ZooKeeper数据存储模型
+# 三、ZooKeeper数据存储模型
 
   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/zookeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png)
   
   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%9B%BE.png)
   
-#四、主要流程图  
+# 四、主要流程图  
 
   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/%E8%B0%83%E5%BA%A6%E4%B8%AD%E5%BF%83%E6%B5%81%E7%A8%8B%E5%9B%BE.png)<br/>
-#五、模块介绍<br/>
+# 五、模块介绍<br/>
 ##Disjob-quence：<br/>
   一个事件通知模式的基础公共模块，在disjob的服务端和客户端代码中都有引入该模块。
 ##Disjob-event：
@@ -55,7 +55,7 @@ disjob客户端的注册模块，zk的监听，选主等都是在该模块中进
 disjob 后台管理模块，在后台对job进行管理、监控、登陆等都是通过该模块
 ##Disjob-java-web：
  服务端接入disjob的例子，实际步骤就是引入disjob-jar然后按照要求配置并实现接口接口
-#六、Quick Start
+# 六、Quick Start
 ##maven 引入disjob-jar
           <dependency><br/>
 			<groupId>com.hqyg</groupId><br/>
