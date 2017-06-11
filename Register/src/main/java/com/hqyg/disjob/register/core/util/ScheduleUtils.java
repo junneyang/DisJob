@@ -291,4 +291,39 @@ public class ScheduleUtils {
 		}
 	}
 	
+	/**
+	 * 根据job信息获取job详情
+	 *
+	 * @param scheduler
+	 * @param job
+	 * @return
+	 * @throws SchedulerException
+	 */
+	public static JobDetail getJobDetail(Scheduler scheduler, JobInfo job)
+			throws SchedulerException {
+		return scheduler.getJobDetail(JobKey.jobKey(job.getJobName(),
+				job.getGroupName()));
+	}
+	
+	
+	/**
+	 * 根据组名获取已经装在到RAM中的jobKey集合,与实际该组在slave对应借点job对比避免重复装载或者少装载的情况
+	 * TODO.
+	 *
+	 * @param scheduler
+	 * @param groupName
+	 * @return
+	 * @throws SchedulerException
+	 */
+	public static Set<JobKey> getJobKeysByGroupName(Scheduler scheduler,
+			String groupName) throws SchedulerException {
+
+		return scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName));
+	}
+	public static String  getKey(JobInfo job){ 
+		return getKey(job.getGroupName(),job.getJobName());
+	}
+	public static String  getKey(String groupName,String jobName){ 
+		return groupName+":"+jobName;
+	}
  }

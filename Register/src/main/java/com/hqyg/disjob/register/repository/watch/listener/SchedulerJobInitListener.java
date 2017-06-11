@@ -1,10 +1,17 @@
 package com.hqyg.disjob.register.repository.watch.listener;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.utils.ZKPaths;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
 
 import com.hqyg.disjob.common.Constants;
 import com.hqyg.disjob.common.model.JobInfo;
@@ -65,7 +72,8 @@ public class SchedulerJobInitListener implements PathChildrenCacheListener {
 	
 	private void updateSchedulerJob(String jobNameStr, String [] jobNameArray, String groupNode){
 		
-		generalSchedulerService.deleteJobGroup(groupNode);
+		//generalSchedulerService.deleteJobGroup(groupNode);
+		System.out.println(Thread.currentThread().getName());
 		if(StringUtils.isEmpty(jobNameStr)){
 			LoggerUtil.debug(" updateSchedulerJob returned jobNameArray : " + jobNameStr + " | groupNode : " + groupNode);
 			return ;
@@ -82,8 +90,7 @@ public class SchedulerJobInitListener implements PathChildrenCacheListener {
 			String jobPath = ZKPaths.makePath(jobRootPath, Constants.PATH_SEPARATOR + groupNode,
 					Constants.PATH_SEPARATOR + jobName, Constants.APP_JOB_NODE_CONFIG);
 			JobInfo job = nodeApi.getData(client, jobPath, JobInfo.class);
-			//如果该job是暂停状态,则不构造job来执行
-			if(job !=null && (job.getJobStatus() == 3 || job.getJobStatus() == 0)){	//未激活 or 仅提交,还没有cron表达式
+ 			if(job !=null && (job.getJobStatus() == 3 || job.getJobStatus() == 0)){	//鏈縺娲�or 浠呮彁浜�杩樻病鏈塩ron琛ㄨ揪寮�
 				LoggerUtil.warn("jobinfo schedule failure job status:" + job.getJobStatus() + " jobGroup:" + groupNode + " jobName:" + jobName);
 				continue;
 			}
@@ -94,11 +101,48 @@ public class SchedulerJobInitListener implements PathChildrenCacheListener {
 				 
 			    job.setJobClass(StatelessJobFactory.class);
 			    LoggerUtil.debug("Init StatelessJob job to shceduler, jobGroup:" + groupNode + " jobName:" + jobName);
-				generalSchedulerService.update(job);
+			    boolean exist=false;
+				try {
+					exist = generalSchedulerService.isExistScheduler(job);
+				} catch (SchedulerException e) {
+				}
+			    if(!exist){
+				   generalSchedulerService.update(job);
+			    }
+			  
 				LoggerUtil.debug("Init job to shceduler, jobGroup:" + groupNode + " jobName:" + jobName);
 			}else{
 				LoggerUtil.warn("Can not find job, groupName:" + groupNode + " jobName:" + jobName +" on /ejob/job node");
 			}	
 		}
+		  try {
+			  checkAndRemoveJob(Arrays.asList(jobNameArray),groupNode);
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			LoggerUtil.warn("remove  job error info ");
+		}
 	}
+	
+	/**
+	 * 
+	 * TODO.
+	 *
+	 * @param jobNames
+	 * @param groupName
+	 * @throws SchedulerException
+	 */
+	private void checkAndRemoveJob(List<String>jobNames,String groupName) throws SchedulerException {
+		// TODO Auto-generated method stub
+		Set<JobKey>  jobKeys=generalSchedulerService.getJobKeysByGroupName(groupName);
+		if(CollectionUtils.isEmpty(jobKeys)){
+			return;
+		}
+		for(JobKey jobKey:jobKeys){
+			if(!jobNames.contains(jobKey.getName())){
+				generalSchedulerService.delete(jobKey.getName(), groupName);
+				LoggerUtil.info("delete job[ groupName="+groupName+",jobName"+jobKey.getName()+"]");
+			}
+		}
+	}
+	
 }

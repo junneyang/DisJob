@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.CuratorFrameworkFactory.Builder;
@@ -28,6 +29,7 @@ import com.hqyg.disjob.common.util.LoggerUtil;
 import com.hqyg.disjob.register.auth.node.GlobalAuthNode;
 import com.hqyg.disjob.register.center.RegistryExceptionHandler;
 import com.hqyg.disjob.register.core.service.GeneralSchedulerService;
+import com.hqyg.disjob.register.core.util.CoreConstants;
 import com.hqyg.disjob.register.core.util.ScheduleUtils;
 import com.hqyg.disjob.register.repository.watch.listener.ConnectionStateListenerImpl;
 
@@ -262,5 +264,43 @@ public final class GeneralSchedulerServiceImpl implements GeneralSchedulerServic
 		} catch (SchedulerException e) {
 		}
 		return jobList;
+	}
+
+	@Override
+	public boolean isExistScheduler(JobInfo job) throws SchedulerException {
+		// TODO Auto-generated method stub
+		/**
+		 * 1:判断job是否存在
+		 */
+		if(!ScheduleUtils.isExistJob(scheduler, job.getJobName(), job.getGroupName())){
+			return false;
+		}
+		Set<JobKey>set= ScheduleUtils.getJobKeysByGroupName(scheduler,  job.getGroupName());
+		/**
+		 * 2:获取对应jobdetail
+		 */
+		JobDetail jobDetail=ScheduleUtils.getJobDetail(scheduler, job);
+		if(jobDetail==null||jobDetail.getJobDataMap()==null){
+			return false;
+		}
+		String cronExpression=jobDetail.getJobDataMap().getString(CoreConstants.CRON_EXPRESSION);
+		if(StringUtils.isEmpty(cronExpression)||!cronExpression.equals(job.getCronExpression())){
+			return false;	
+		}
+		/**
+		 * 3判断是否错过
+		 */
+	   
+		boolean misFire=jobDetail.getJobDataMap().getBoolean(CoreConstants.MIS_FIRE);
+		if(misFire!=job.isMisfire()){
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public Set<JobKey> getJobKeysByGroupName(String groupName) throws SchedulerException {
+		// TODO Auto-generated method stub
+		return ScheduleUtils.getJobKeysByGroupName(scheduler, groupName);
 	}
 }

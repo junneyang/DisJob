@@ -25,5 +25,7 @@ public class CoreConstants {
 	public static final String JOB_PATH = "jobPath";//任务调度路径
 	public static final String JOB_CONFIG = "jobConfig" ;
 	
-	public static final String IS_BROADCAST = "isBroadcast"; //广播模式
-}
+	public static final String IS_BROADCAST = "isBroadcast"; //广播模式	
+	public static final String MIS_FIRE="misfire";//错过执行
+	public static final String CRON_EXPRESSION="cronExpression";//cron表达式
+ }

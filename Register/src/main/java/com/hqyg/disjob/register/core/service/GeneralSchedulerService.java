@@ -1,6 +1,10 @@
 package com.hqyg.disjob.register.core.service;
 
 import java.util.List;
+import java.util.Set;
+
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
 
 import com.hqyg.disjob.common.model.JobInfo;
 
@@ -75,4 +79,9 @@ public interface GeneralSchedulerService {
 	 * @return 返回JobInfo类型列表的任务信息
 	 */
 	List<JobInfo> findById(String jobName,String jobGroup);
+
+	boolean isExistScheduler(JobInfo job) throws SchedulerException;
+
+	Set<JobKey> getJobKeysByGroupName(String groupName) throws SchedulerException;
+
 }
