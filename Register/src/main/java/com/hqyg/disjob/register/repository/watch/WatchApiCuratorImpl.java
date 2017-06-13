@@ -1,7 +1,9 @@
 package com.hqyg.disjob.register.repository.watch;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
@@ -25,6 +27,7 @@ import com.hqyg.disjob.register.repository.watch.listener.AbstractNodeCacheListe
  */
 @Service("watchApi")
 public class WatchApiCuratorImpl implements WatchApi {
+	private static final ConcurrentHashMap<String, PathChildrenCache> pathChildrenCacheMap=new ConcurrentHashMap<String, PathChildrenCache>();
 
 	public PathChildrenCache pathChildrenCache;
 	
@@ -102,6 +105,8 @@ public class WatchApiCuratorImpl implements WatchApi {
 		for (ChildData data : childDataList) {
 			result.add(data.getPath());
 		}
+		pathChildrenCacheMap.put(znode, childrenCache);
+
 		return result;
 	}
 
@@ -123,5 +128,18 @@ public class WatchApiCuratorImpl implements WatchApi {
 
 	public void setPathChildrenCache(PathChildrenCache pathChildrenCache) {
 		this.pathChildrenCache = pathChildrenCache;
+	}
+	public static void closePathChildrenCache(String key){
+		PathChildrenCache pathChildrenCache=pathChildrenCacheMap.get(key);
+		if(pathChildrenCache!=null){
+			try {
+			    LoggerUtil.info("begin close listener ["+key+"] 的 pathChildrenCache");
+				pathChildrenCache.close();
+				pathChildrenCacheMap.remove(key);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			  LoggerUtil.error("关闭 ["+key+"] 失败");
+			}
+		}
 	}
 }

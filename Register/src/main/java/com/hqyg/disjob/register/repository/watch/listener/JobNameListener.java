@@ -96,6 +96,9 @@ public class JobNameListener extends AbstractJobBuild{
                     jobList.remove(jobName);
                  }
             }*/
+            
+            WatchApiCuratorImpl.closePathChildrenCache(event.getData().getPath()+Constants.PATH_SEPARATOR+Constants.EJOB_PROVIDERS);
+
           }
         
         if(org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_UPDATED == event.getType()){

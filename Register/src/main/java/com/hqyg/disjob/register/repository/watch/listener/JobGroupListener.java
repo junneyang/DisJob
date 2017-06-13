@@ -66,14 +66,16 @@ public class JobGroupListener extends AbstractJobBuild{
         
         if (org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_REMOVED == event.getType()){
             LoggerUtil.info("remove group is ," + event.getData().getPath());
-           // String groupNode = event.getData().getPath();
+            String groupNode = event.getData().getPath();
             /*if (ZKJobCache.groupList.contains(groupNode)){
                 ZKJobCache.groupList.remove(groupNode);
             }*/
            /* if (ZKJobCache.serverMap.containsKey(groupNode)){
                 ZKJobCache.serverMap.remove(groupNode);
             }*/
-           // ZKJobCache.groupJobMap.remove(array[3]); //维护缓存
+          // ZKJobCache.groupJobMap.remove(array[3]); //维护缓存
+           WatchApiCuratorImpl.closePathChildrenCache(groupNode);
+
         }
         
         if (org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent.Type.CHILD_UPDATED == event.getType()){
