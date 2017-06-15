@@ -111,6 +111,6 @@ disjob 后台管理模块，在后台对job进行管理、监控、登陆等都�
 ### 5、编译打包
 最后对DisJob的pom文件 所在路径下执行mvn clean package install -Ppublish -X -Dmaven.test.skip=true(这里是执行publish环境)
 ##### disjob后台效果:
-   ![](https://github.com/huangyiminghappy/DisJob/blob/master/imgs/job%E7%AE%A1%E7%90%86.png)
+   ![](https://raw.githubusercontent.com/huangyiminghappy/DisJob/master/imgs/job%E7%AE%A1%E7%90%86.png)
   
   
